@@ -3,7 +3,6 @@
 {%- if slave.enabled %}
 
 include:
-- java
 {%- if slave.pbuilder is defined %}
 - jenkins.slave.pbuilder
 {%- endif %}

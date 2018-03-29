@@ -1,9 +1,6 @@
 {%- from "jenkins/map.jinja" import master with context %}
 {%- if master.enabled %}
 
-include:
-- java
-
 jenkins_packages:
   pkg.installed:
   - names: {{ master.pkgs }}
