@@ -75,6 +75,26 @@ jenkins_{{ master.config }}:
 
 {%- endif %}
 
+jenkins_node_dir:
+  file.directory:
+    - name: /var/lib/jenkins/nodes
+    - user: jenkins
+
+{%- if pillar.jenkins.master.slaves is defined %}
+{%- for slave in pillar.jenkins.master.slaves %}
+jenkins_slave_{{ slave.name }}:
+  file.managed:
+    - name: /var/lib/jenkins/nodes/{{ slave.name }}/config.xml
+    - source: salt://jenkins/files/config.slave.xml
+    - template: jinja
+    - user: jenkins
+    - watch_in:
+      - service: jenkins_master_service
+    - require:
+      - file: jenkins_node_dir
+{%- endfor %}
+{%- endif %}
+
 jenkins_master_service:
   service.running:
   - name: {{ master.service }}

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <hudson>
   <disabledAdministrativeMonitors>
     <string>jenkins.security.s2m.MasterKillSwitchWarning</string>
@@ -23,39 +23,6 @@
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
   <clouds/>
-  <slaves>
-    {%- if pillar.jenkins.master.slaves is defined %}
-    {%- for slave in pillar.jenkins.master.slaves %}
-    <slave>
-      <name>{{ slave.name }}</name>
-      <description></description>
-      <remoteFS>/var/lib/jenkins</remoteFS>
-      <numExecutors>{{ slave.executors }}</numExecutors>
-      <mode>{%- if slave.mode is defined %}{{ slave.mode }}{%- else %}NORMAL{%- endif %}</mode>
-      <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
-      <launcher class="hudson.slaves.JNLPLauncher"/>
-      <label>{%- if slave.label is defined %}{{ slave.label }}{%- endif %}</label>
-      <nodeProperties>
-        <hudson.slaves.EnvironmentVariablesNodeProperty>
-          <envVars serialization="custom">
-            <unserializable-parents/>
-            <tree-map>
-              <default>
-                <comparator class="hudson.util.CaseInsensitiveComparator"/>
-              </default>
-              <int>0</int>
-            </tree-map>
-          </envVars>
-        </hudson.slaves.EnvironmentVariablesNodeProperty>
-        <node-metadata plugin="metadata@1.0b">
-          <values class="linked-list"/>
-        </node-metadata>
-      </nodeProperties>
-      <userId>admin</userId>
-    </slave>
-    {%- endfor %}
-    {%- endif %}
-  </slaves>
   <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
   <views>
     <hudson.model.AllView>
