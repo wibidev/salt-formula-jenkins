@@ -88,6 +88,8 @@ jenkins_slave_{{ slave.name }}:
     - source: salt://jenkins/files/config.slave.xml
     - template: jinja
     - user: jenkins
+    - context:
+        slave: {{ slave }}
     - watch_in:
       - service: jenkins_master_service
     - require:
