@@ -17,14 +17,11 @@ setup_jenkins_cli:
 {%- for plugin in master.plugins %}
 
 install_jenkins_plugin_{{ plugin.name }}:
-  cmd.run:
-  - name: >
-      java -jar jenkins-cli.jar -s http://localhost:{{ master.http.port }} install-plugin {{ plugin.name }} ||
-      java -jar jenkins-cli.jar -s http://localhost:{{ master.http.port }} install-plugin --username admin --password '{{ master.user.admin.password }}' {{ plugin.name }}
-  - unless: "[ -d {{ master.home }}/plugins/{{ plugin.name }} ]"
-  - cwd: /root
-  - require:
-    - cmd: setup_jenkins_cli
-    - cmd: jenkins_service_running
+  module.run:
+    - jenkins.plugin_installed:
+      - name: {{ plugin.name }}
+    - require:
+      - cmd: setup_jenkins_cli
+      - cmd: jenkins_service_running
 
 {%- endfor %}
