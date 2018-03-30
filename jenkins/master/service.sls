@@ -88,8 +88,6 @@ jenkins_slave_{{ slave.name }}:
         slave: {{ slave }}
     - watch_in:
       - service: jenkins_master_service
-    - require:
-      - file: jenkins_node_dir
 {%- endfor %}
 {%- endif %}
 
