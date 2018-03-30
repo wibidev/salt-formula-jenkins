@@ -75,17 +75,13 @@ jenkins_{{ master.config }}:
 
 {%- endif %}
 
-jenkins_node_dir:
-  file.directory:
-    - name: /var/lib/jenkins/nodes
-    - user: jenkins
-
 {%- if pillar.jenkins.master.slaves is defined %}
 {%- for slave in pillar.jenkins.master.slaves %}
 jenkins_slave_{{ slave.name }}:
   file.managed:
     - name: /var/lib/jenkins/nodes/{{ slave.name }}/config.xml
     - source: salt://jenkins/files/config.slave.xml
+    - makedirs: True
     - template: jinja
     - user: jenkins
     - context:
