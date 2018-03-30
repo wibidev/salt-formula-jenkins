@@ -14,10 +14,6 @@ setup_jenkins_cli:
   - require:
     - cmd: jenkins_service_running
 
-install_jenkins_pyhton_module:
-  pip.installed:
-    - name: python-jenkins
-
 {%- for plugin in master.plugins %}
 
 install_jenkins_plugin_{{ plugin.name }}:
