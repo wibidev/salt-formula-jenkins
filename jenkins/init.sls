@@ -1,5 +1,6 @@
 
 include:
+- jenkins.pre_install
 {%- if pillar.jenkins.master is defined %}
 - jenkins.master
 {%- endif %}
