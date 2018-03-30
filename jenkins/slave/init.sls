@@ -24,17 +24,17 @@ jenkins_slave_package:
 {% else %}
 
 # No jenkins-slave package, use magic init script instead
-{%- if grains.init == 'systemd' %}
-jenkins_slave_init_script:
-  file.managed:
-    - name: /etc/systemd/system/jenkins-slave.service
-    - source: salt://jenkins/files/slave/jenkins-slave.service
-    - user: root
-    - group: root
-    - mode: 644
-    - require:
-      - file: jenkins_slave_start_script
-{%- else %}
+# {%- if grains.init == 'systemd' %}
+# jenkins_slave_init_script:
+#   file.managed:
+#     - name: /etc/systemd/system/jenkins-slave.service
+#     - source: salt://jenkins/files/slave/jenkins-slave.service
+#     - user: root
+#     - group: root
+#     - mode: 644
+#     - require:
+#       - file: jenkins_slave_start_script
+# {%- else %}
 jenkins_slave_init_script:
   file.managed:
     - name: {{ slave.init_script }}
@@ -45,7 +45,7 @@ jenkins_slave_init_script:
     - template: jinja
     - require:
       - file: jenkins_slave_start_script
-{%- endif %}
+# {%- endif %}
 
 {% endif %}
 
