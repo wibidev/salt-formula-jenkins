@@ -163,6 +163,7 @@ Agent (slave) role
 
     jenkins:
       slave:
+        enabled: True
         master:
           host: jenkins.example.com
           port: 80

@@ -2,7 +2,9 @@
 
 {%- if slave.enabled %}
 
+{%- if slave.pbuilder is defined or slave.gpg is defined or slave.keystone is defined %}
 include:
+{%- endif %}
 {%- if slave.pbuilder is defined %}
 - jenkins.slave.pbuilder
 {%- endif %}
