@@ -84,8 +84,6 @@ jenkins_slave_service:
     - file: jenkins_slave_init_script
     {% endif %}
 
-{%- if pillar.linux.system.user.jenkins is not defined %}
-
 jenkins_slave_user:
   user.present:
   - name: jenkins
@@ -98,8 +96,6 @@ jenkins_slave_user:
     {%- if slave.pbuilder is defined %}
     - file: /var/lib/jenkins/pbuilder
     {%- endif %}
-
-{%- endif %}
 
 {%- if slave.get('sudo', false) %}
 

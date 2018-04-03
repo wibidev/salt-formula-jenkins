@@ -2,8 +2,8 @@
 Jenkins formula
 ===============
 
-Jenkins CI is an open source automation server written in Java. Jenkins 
-helps to automate the non-human part of software development process, with 
+Jenkins CI is an open source automation server written in Java. Jenkins
+helps to automate the non-human part of software development process, with
 continuous integration and facilitating technical aspects of continuous delivery.
 
 (*Source*: `Wikipedia <https://en.wikipedia.org/wiki/Jenkins_(software)>`_ )
@@ -69,17 +69,22 @@ Simple master with reverse proxy
               port: 80
     jenkins:
       master:
+        enabled: True
         mode: EXCLUSIVE
+        http:
+          network: any
+          port: 8080
+          protocol: http
         # Do not manage config.xml from Salt, use UI instead
         no_config: true
         slaves:
           - name: slave01
-             label: pbuilder
-             executors: 2
+            label: pbuilder
+            executors: 2
           - name: slave02
-             label: image_builder
-             mode: EXCLUSIVE
-             executors: 2
+            label: image_builder
+            mode: EXCLUSIVE
+            executors: 2
         views:
           - name: "Package builds"
             regex: "debian-build-.*"
@@ -88,10 +93,10 @@ Simple master with reverse proxy
           - name: "Aptly"
             regex: "aptly-.*"
         plugins:
-        - name: slack
-        - name: extended-choice-parameter
-        - name: rebuild
-        - name: test-stability
+          - name: slack
+          - name: extended-choice-parameter
+          - name: rebuild
+          - name: test-stability
 
 Jenkins master with experimental plugin source support
 
@@ -185,6 +190,7 @@ Simple client with workflow job definition
     jenkins:
       client:
         master:
+          enabled: True
           host: jenkins.example.com
           port: 80
           protocol: http
@@ -509,7 +515,7 @@ Matrix configuration (depends on auth-matrix plugin)
         security:
           matrix:
             # set true for use ProjectMatrixAuthStrategy instead of GlobalMatrixAuthStrategy
-            project_based: false  
+            project_based: false
             permissions:
               Jenkins:
                 # administrator access
@@ -521,14 +527,14 @@ Matrix configuration (depends on auth-matrix plugin)
                   - user1
                   - user2
                 # agents permissions
-                MasterComputer: 
-                  BUILD: 
+                MasterComputer:
+                  BUILD:
                     - user3
               # jobs permissions
-              hudson: 
+              hudson:
                 model:
                   Item:
-                    BUILD: 
+                    BUILD:
                       - user4
 
 `Common matrix strategies <https://github.com/arbabnazar/configuration/blob/c08a5eaf4e04a68d2481375502a926517097b253/playbooks/roles/tools_jenkins/templates/projectBasedMatrixSecurity.groovy.j2>`_
@@ -697,7 +703,7 @@ Jenkins admin user email enforcement from client
 Slack plugin configuration
 
 .. code-block:: yaml
-    
+
     jenkins:
       client:
         slack:
