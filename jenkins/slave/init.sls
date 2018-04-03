@@ -20,8 +20,6 @@ include:
 jenkins_slave_package:
   pkg.installed:
   - names: {{ slave.pkgs }}
-  - require:
-    - pkg: java_packages
 
 {% else %}
 
