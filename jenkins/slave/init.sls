@@ -26,7 +26,7 @@ jenkins_slave_install:
 jenkins_slave_install:
   cmd.run:
     - name: 'java -jar agent.jar -jnlpUrl http://{{ slave.master.host }}/computer/{{ slave.name }}/slave-agent.jnlp'
-    - cwd: ' '{%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}
+    - cwd: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
 
 # No jenkins-slave package, use magic init script instead
 # {%- if grains.init == 'systemd' %}
@@ -93,7 +93,7 @@ jenkins_slave_user:
   user.present:
   - name: jenkins
   - shell: /bin/bash
-  - home: ' '{%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}
+  - home: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
   - require_in:
     {%- if slave.gpg is defined %}
     - file: jenkins_gpg_key_dir
