@@ -20,9 +20,6 @@
         </tree-map>
       </envVars>
     </hudson.slaves.EnvironmentVariablesNodeProperty>
-    <node-metadata plugin="metadata@1.0b">
-      <values class="linked-list"/>
-    </node-metadata>
   </nodeProperties>
   <userId>admin</userId>
 </slave>
