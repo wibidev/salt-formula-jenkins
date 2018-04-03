@@ -41,7 +41,7 @@
 
 {% set slave = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['jenkins-slave'],
+        'pkgs': [],
         'init_script': '/etc/init.d/jenkins-slave',
         'service': 'jenkins-slave',
         'config': '/etc/default/jenkins-slave',

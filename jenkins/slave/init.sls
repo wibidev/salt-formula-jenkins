@@ -17,11 +17,16 @@ include:
 
 {% if slave.pkgs %}
 
-jenkins_slave_package:
+jenkins_slave_install:
   pkg.installed:
   - names: {{ slave.pkgs }}
 
 {% else %}
+
+jenkins_slave_install:
+  cmd.run:
+    - name: 'java -jar agent.jar -jnlpUrl http://{{ slave.master.host }}/computer/{{ slave.name }}/slave-agent.jnlp'
+    - cwd: {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}
 
 # No jenkins-slave package, use magic init script instead
 # {%- if grains.init == 'systemd' %}
@@ -35,41 +40,41 @@ jenkins_slave_package:
 #     - require:
 #       - file: jenkins_slave_start_script
 # {%- else %}
-jenkins_slave_init_script:
-  file.managed:
-    - name: {{ slave.init_script }}
-    - source: salt://jenkins/files/slave/init.d/jenkins-slave
-    - user: root
-    - group: root
-    - mode: 755
-    - template: jinja
-    - require:
-      - file: jenkins_slave_start_script
+# jenkins_slave_init_script:
+#   file.managed:
+#     - name: {{ slave.init_script }}
+#     - source: salt://jenkins/files/slave/init.d/jenkins-slave
+#     - user: root
+#     - group: root
+#     - mode: 755
+#     - template: jinja
+#     - require:
+#       - file: jenkins_slave_start_script
 # {%- endif %}
 
 {% endif %}
 
-{{ slave.config }}:
-  file.managed:
-  - source: salt://jenkins/files/slave/default
-  - user: root
-  - group: root
-  - template: jinja
-  - require:
-    {% if slave.pkgs %}
-    - pkg: jenkins_slave_package
-    {% else %}
-    - file: jenkins_slave_init_script
-    {% endif %}
-
-jenkins_slave_start_script:
-  file.managed:
-  - name: /usr/local/bin/jenkins-slave
-  - source: salt://jenkins/files/slave/jenkins-slave
-  - user: root
-  - group: root
-  - mode: 755
-  - template: jinja
+# {{ slave.config }}:
+#   file.managed:
+#   - source: salt://jenkins/files/slave/default
+#   - user: root
+#   - group: root
+#   - template: jinja
+#   - require:
+#     {% if slave.pkgs %}
+#     - pkg: jenkins_slave_install
+#     {% else %}
+#     - file: jenkins_slave_init_script
+#     {% endif %}
+#
+# jenkins_slave_start_script:
+#   file.managed:
+#   - name: /usr/local/bin/jenkins-slave
+#   - source: salt://jenkins/files/slave/jenkins-slave
+#   - user: root
+#   - group: root
+#   - mode: 755
+#   - template: jinja
 
 jenkins_slave_service:
   service.running:
@@ -79,7 +84,7 @@ jenkins_slave_service:
   - enable: true
   - require:
     {% if slave.pkgs %}
-    - pkg: jenkins_slave_package
+    - pkg: jenkins_slave_install
     {% else %}
     - file: jenkins_slave_init_script
     {% endif %}
@@ -88,7 +93,7 @@ jenkins_slave_user:
   user.present:
   - name: jenkins
   - shell: /bin/bash
-  - home: /var/lib/jenkins
+  - home: {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}
   - require_in:
     {%- if slave.gpg is defined %}
     - file: jenkins_gpg_key_dir
