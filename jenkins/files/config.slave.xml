@@ -2,7 +2,7 @@
 <slave>
   <name>{{ slave.name }}</name>
   <description></description>
-  <remoteFS>/var/lib/jenkins</remoteFS>
+  <remoteFS>{%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}</remoteFS>
   <numExecutors>{{ slave.executors }}</numExecutors>
   <mode>{%- if slave.mode is defined %}{{ slave.mode }}{%- else %}NORMAL{%- endif %}</mode>
   <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
