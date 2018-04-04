@@ -99,10 +99,10 @@ jenkins_slave_service:
 
 {% else %}
 
-jenkins_slave_install:
-  cmd.run:
-    - name: "java -jar agent.jar -jnlpUrl http://{{ slave.master.host }}/computer/{{ slave.name }}/slave-agent.jnlp -jnlpCredentials '{{ slave.master.user }}:{{ slave.master.password }}'"
-    - cwd: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
+# jenkins_slave_install:
+#   cmd.run:
+#     - name: "java -jar agent.jar -jnlpUrl http://{{ slave.master.host }}/computer/{{ slave.name }}/slave-agent.jnlp -jnlpCredentials '{{ slave.master.user }}:{{ slave.master.password }}'"
+#     - cwd: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
 
 {% endif %}
 
