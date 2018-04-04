@@ -15,20 +15,24 @@ include:
 - jenkins.slave.keystone
 {%- endif %}
 
+jenkins_slave_user:
+  user.present:
+  - name: jenkins
+  - shell: /bin/bash
+  - home: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
+  - require_in:
+    {%- if slave.gpg is defined %}
+    - file: jenkins_gpg_key_dir
+    {%- endif %}
+    {%- if slave.pbuilder is defined %}
+    - file: /var/lib/jenkins/pbuilder
+    {%- endif %}
+
 {% if slave.pkgs %}
 
 jenkins_slave_install:
   pkg.installed:
   - names: {{ slave.pkgs }}
-
-{% else %}
-
-jenkins_slave_install:
-  cmd.run:
-    - name: "java -jar agent.jar -jnlpUrl http://{{ slave.master.host }}/computer/{{ slave.name }}/slave-agent.jnlp -jnlpCredentials '{{ slave.master.user }}:{{ slave.master.password }}'"
-    - cwd: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
-
-{% endif %}
 
 # No jenkins-slave package, use magic init script instead
 {%- if grains.init == 'systemd' %}
@@ -93,18 +97,14 @@ jenkins_slave_service:
     - file: jenkins_slave_init_script
     {% endif %}
 
-jenkins_slave_user:
-  user.present:
-  - name: jenkins
-  - shell: /bin/bash
-  - home: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
-  - require_in:
-    {%- if slave.gpg is defined %}
-    - file: jenkins_gpg_key_dir
-    {%- endif %}
-    {%- if slave.pbuilder is defined %}
-    - file: /var/lib/jenkins/pbuilder
-    {%- endif %}
+{% else %}
+
+jenkins_slave_install:
+  cmd.run:
+    - name: "java -jar agent.jar -jnlpUrl http://{{ slave.master.host }}/computer/{{ slave.name }}/slave-agent.jnlp -jnlpCredentials '{{ slave.master.user }}:{{ slave.master.password }}'"
+    - cwd: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
+
+{% endif %}
 
 {%- if slave.get('sudo', false) %}
 
