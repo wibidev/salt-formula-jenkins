@@ -29,14 +29,11 @@ jenkins_slave_user:
     {%- endif %}
 
 {% if slave.pkgs %}
-
 jenkins_slave_install:
   pkg.installed:
   - names: {{ slave.pkgs }}
 
-# No jenkins-slave package, use magic init script instead
 {%- if grains.init == 'systemd' %}
-
 jenkins_slave_init_script:
   file.managed:
     - name: /etc/systemd/system/jenkins-slave.service
@@ -46,9 +43,11 @@ jenkins_slave_init_script:
     - mode: 644
     - require:
       - file: jenkins_slave_start_script
+{%- endif %}
 
-{%- else %}
+{% else %}
 
+# No jenkins-slave package, use magic init script instead
 jenkins_slave_init_script:
   file.managed:
     - name: {{ slave.init_script }}
@@ -60,10 +59,11 @@ jenkins_slave_init_script:
     - require:
       - file: jenkins_slave_start_script
 
-{%- endif %}
+{% endif %}
 
-{{ slave.config }}:
+jenkins_slave_config:
   file.managed:
+  - name: {{ slave.config }}
   - source: salt://jenkins/files/slave/default
   - user: root
   - group: root
@@ -84,32 +84,33 @@ jenkins_slave_start_script:
   - mode: 755
   - template: jinja
 
+jenkins_slave_enable_service:
+  cmd.run:
+    - name: 'systemctl enable jenkins-slave.service'
+    - unless: 'systemctl status jenkins-slave.service'
+    - require:
+      {% if slave.pkgs %}
+      - pkg: jenkins_slave_install
+      {% else %}
+      - file: jenkins_slave_init_script
+      {% endif %}
+
 jenkins_slave_service:
   service.running:
   - name: {{ slave.service }}
-  - watch:
-    - file: {{ slave.config }}
   - enable: true
   - require:
-    {% if slave.pkgs %}
-    - pkg: jenkins_slave_install
-    {% else %}
+    - cmd: jenkins_slave_enable_service
+  - watch:
+    - file: jenkins_slave_config
+    {% if not slave.pkgs %}
     - file: jenkins_slave_init_script
     {% endif %}
 
-{% else %}
-
-# jenkins_slave_install:
-#   cmd.run:
-#     - name: "java -jar agent.jar -jnlpUrl http://{{ slave.master.host }}/computer/{{ slave.name }}/slave-agent.jnlp -jnlpCredentials '{{ slave.master.user }}:{{ slave.master.password }}'"
-#     - cwd: ' {%- if slave.remoteFs is defined %}{{ slave.remoteFs }}{%- else %}/var/lib/jenkins{%- endif %}'
-
-{% endif %}
-
 {%- if slave.get('sudo', false) %}
-
-/etc/sudoers.d/99-jenkins-user:
+jenkins_slave_sudoer:
   file.managed:
+  - name: /etc/sudoers.d/99-jenkins-user
   - source: salt://jenkins/files/slave/sudoer
   - template: jinja
   - user: root
@@ -117,7 +118,6 @@ jenkins_slave_service:
   - mode: 440
   - require:
     - service: jenkins_slave_service
-
 {%- endif %}
 
 {%- endif %}

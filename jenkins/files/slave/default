@@ -1,12 +1,12 @@
 {%- from "jenkins/map.jinja" import slave with context %}
-# defaults for jenkins-slave component of the jenkins continuous integration 
+# defaults for jenkins-slave component of the jenkins continuous integration
 # system
 
 # pulled in from the init script; makes things easier.
 NAME=jenkins-slave
 
 # location of java
-JAVA=/usr/bin/java
+JAVA_HOME=/usr
 
 # arguments to pass to java - optional
 #JAVA_ARGS="-Xmx256m"

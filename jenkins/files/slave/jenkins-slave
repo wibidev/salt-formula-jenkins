@@ -1,14 +1,34 @@
 #!/bin/bash
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!  This file is managed by SALT   !!!!!!!!!!!!
+#!!!!!!!!!     DO NOT EDIT MANUALLY !      !!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-if test -f /etc/default/jenkins-slave; then
-	. /etc/default/jenkins-slave
+NAME=jenkins-slave
+
+# Check config
+if test -f /etc/default/$NAME; then
+  . /etc/default/$NAME
 else
-	echo "Configuration for jenkins-slave does not exist" 1>&2
-	exit 1
+  echo "Configuration for $NAME does not exist" 1>&2
+  exit 1
+fi
+
+# Check Java
+if [ -x "${JAVA_HOME}/bin/java" ]; then
+  JAVA="${JAVA_HOME}/bin/java"
+else
+  JAVA=`which java`
+fi
+if [ ! -x "$JAVA" ]; then
+  echo "Could not find any executable java binary. Please install java in your PATH or set JAVA_HOME"
+  exit 1
 fi
 
 # Get slave.jar from master
 [ -n "${JENKINS_LOGIN}" ] && WGET_ARGS="--user=$JENKINS_LOGIN --password=$JENKINS_PASSWORD"
-[ -f ${JENKINS_HOME}/slave.jar ] || wget $WGET_ARGS -O ${JENKINS_HOME}/slave.jar -q ${JENKINS_URL}/jnlpJars/slave.jar
+[ -f ${JENKINS_HOME}/agent.jar ] || wget $WGET_ARGS -O ${JENKINS_HOME}/agent.jar -q ${JENKINS_URL}/jnlpJars/agent.jar
 
-java -jar ${JENKINS_HOME}/slave.jar ${JENKINS_ARGS}
+$JAVA -jar ${JENKINS_HOME}/agent.jar ${JENKINS_ARGS}
