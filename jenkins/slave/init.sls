@@ -84,11 +84,21 @@ jenkins_slave_start_script:
   - mode: 755
   - template: jinja
 
+jenkins_slave_logs:
+  file.directory:
+    - name: /var/log/jenkins
+    - makedirs: True
+    - user: jenkins
+    - group: jenkins
+    - require:
+      - user: jenkins_slave_user
+
 jenkins_slave_enable_service:
   cmd.run:
     - name: 'systemctl enable jenkins-slave.service'
     - unless: 'systemctl status jenkins-slave.service'
     - require:
+      - file: jenkins_slave_logs
       {% if slave.pkgs %}
       - pkg: jenkins_slave_install
       {% else %}

@@ -49,11 +49,11 @@ function checkJava() {
 }
 
 function checkRunning() {
-  pid=`pidofproc -p ${PIDFILE} $NAME`
-  if [ -n "$pid" ] ; then
-    log_begin_msg "Jenkins slave already running."
-    log_end_msg 0
-    exit 0
+  start-stop-daemon -T --pidfile ${PIDFILE}
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    log_end_msg 1 || true
+    exit $ret
   fi
 }
 
@@ -62,7 +62,7 @@ function start() {
   [ -n "${JENKINS_LOGIN}" ] && WGET_ARGS="--user=$JENKINS_LOGIN --password=$JENKINS_PASSWORD"
   [ -f ${JENKINS_HOME}/agent.jar ] || wget $WGET_ARGS -O ${JENKINS_HOME}/agent.jar -q ${JENKINS_URL}/jnlpJars/agent.jar
 
-  if start-stop-daemon -c ${JENKINS_USER} -d ${JENKINS_HOME} --background --start --quiet --oknodo -m --pidfile ${PIDFILE} --startas /bin/bash -- -c "exec ${COMMAND} ${COMMAND_ARGS} > $JENKINS_SLAVE_LOG 2>&1"; then
+  if start-stop-daemon -c ${JENKINS_USER} -d ${JENKINS_HOME} --background --start --quiet --oknodo -m --pidfile ${PIDFILE} --exec ${COMMAND} -- ${COMMAND_ARGS} > ${JENKINS_SLAVE_LOG} 2>&1; then
     log_end_msg 0 || true
   else
     log_end_msg 1 || true
@@ -80,9 +80,9 @@ function stop() {
 case "$1" in
   start)
     checkJava
-    checkRunning
     log_daemon_msg "Starting Jenkins slave" "$NAME" || true
     start
+    checkRunning
     ;;
   stop)
     log_daemon_msg "Stopping Jenkins slave" "$NAME" || true
