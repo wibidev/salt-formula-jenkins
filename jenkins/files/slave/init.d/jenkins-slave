@@ -62,7 +62,7 @@ function start() {
   [ -n "${JENKINS_LOGIN}" ] && WGET_ARGS="--user=$JENKINS_LOGIN --password=$JENKINS_PASSWORD"
   [ -f ${JENKINS_HOME}/agent.jar ] || wget $WGET_ARGS -O ${JENKINS_HOME}/agent.jar -q ${JENKINS_URL}/jnlpJars/agent.jar
 
-  if start-stop-daemon -c ${JENKINS_USER} -d ${JENKINS_HOME} --start --quiet --oknodo -m --pidfile ${PIDFILE} --exec ${COMMAND} -- ${COMMAND_ARGS} > ${JENKINS_SLAVE_LOG} 2>&1; then
+  if start-stop-daemon -c ${JENKINS_USER} -d ${JENKINS_HOME} --background --start --quiet --oknodo -m --pidfile ${PIDFILE} --exec ${COMMAND} -- ${COMMAND_ARGS} > ${JENKINS_SLAVE_LOG} 2>&1; then
     log_end_msg 0 || true
   else
     log_end_msg 1 || true
