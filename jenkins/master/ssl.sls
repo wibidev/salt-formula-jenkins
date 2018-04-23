@@ -17,7 +17,7 @@ jenkins.ssl.certificate:
 
 jenkins.ssl.pkcs12:
   cmd.run:
-    - name: 'openssl pkcs12 -inkey {{ master.ssl.fileName }}.pem -in {{ master.ssl.fileName }}.crt -export -out keys.pkcs12'
+    - name: 'openssl pkcs12 -inkey {{ master.ssl.fileName }}.pem -in {{ master.ssl.fileName }}.crt -export -out keys.pkcs12 -password pass:{{ master.ssl.javaKeystorePassword }}'
     - unless: 'test -e /var/lib/jenkins/keys.pkcs12'
     - cwd: /var/lib/jenkins
     - user: root
@@ -27,7 +27,7 @@ jenkins.ssl.pkcs12:
 
 jenkins.ssl.keystore:
   cmd.run:
-    - name: 'keytool -importkeystore -srckeystore keys.pkcs12 -srcstoretype pkcs12 -destkeystore jenkins.jks -deststoretype pkcs12'
+    - name: 'keytool -importkeystore -srckeystore keys.pkcs12 -srcstoretype pkcs12 -srcstorepass {{ master.ssl.javaKeystorePassword }} -destkeystore jenkins.jks -deststoretype pkcs12 -deststorepass {{ master.ssl.javaKeystorePassword }}'
     - unless: 'test -e /var/lib/jenkins/jenkins.jks'
     - cwd: /var/lib/jenkins
     - user: root
