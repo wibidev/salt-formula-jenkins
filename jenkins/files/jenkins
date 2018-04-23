@@ -39,6 +39,9 @@ MAXOPENFILES=8192
 
 # port for HTTP connector (default 8080; disable with -1)
 HTTP_PORT={{ pillar.jenkins.master.http.port }}
+{% if pillar.jenkins.master.ssl.enabled %}
+HTTPS_PORT={{ pillar.jenkins.master.ssl.port }}
+{% endif %}
 
 # port for AJP connector (disabled by default)
 AJP_PORT=-1
@@ -57,7 +60,7 @@ PREFIX=/jenkins
 # --prefix=$PREFIX
 
 {% if pillar.jenkins.master.ssl.enabled %}
-JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=-1 --httpsPort=$HTTP_PORT --httpsKeyStore=../../var/lib/jenkins/jenkins.jks --httpsKeyStorePassword={{ pillar.jenkins.master.ssl.javaKeystorePassword }}"
+JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=$HTTP_PORT --httpsPort=$HTTPS_PORT --httpsKeyStore=../../var/lib/jenkins/jenkins.jks --httpsKeyStorePassword={{ pillar.jenkins.master.ssl.javaKeystorePassword }}"
 {% else %}
 JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=$HTTP_PORT --ajp13Port=$AJP_PORT"
 {% endif %}
