@@ -5,12 +5,14 @@ jenkins.ssl.key:
   file.managed:
     - name: /var/lib/jenkins/{{ master.ssl.fileName }}.pem
     - source: {{ master.ssl.key }}
+    - source_hash: {{ master.ssl.keyHash }}
     - mode: 0644
 
 jenkins.ssl.certificate:
   file.managed:
     - name: /var/lib/jenkins/{{ master.ssl.fileName }}.crt
     - source: {{ master.ssl.chainCert }}
+    - source_hash: {{ master.ssl.chainCertHash }}
     - mode: 0644
 
 jenkins.ssl.pkcs12:
