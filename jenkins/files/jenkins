@@ -56,4 +56,8 @@ PREFIX=/jenkins
 # --webroot=~/.jenkins/war
 # --prefix=$PREFIX
 
+{% if pillar.jenkins.master.ssl.enabled %}
 JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=-1 --httpsPort=$HTTP_PORT --httpsKeyStore=../../var/lib/jenkins/jenkins.jks --httpsKeyStorePassword={{ pillar.jenkins.master.ssl.javaKeystorePassword }}"
+{% else %}
+JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=$HTTP_PORT --ajp13Port=$AJP_PORT"
+{% endif %}
