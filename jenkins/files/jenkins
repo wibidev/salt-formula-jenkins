@@ -56,4 +56,4 @@ PREFIX=/jenkins
 # --webroot=~/.jenkins/war
 # --prefix=$PREFIX
 
-JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=-1 --httpsPort=$HTTP_PORT --httpsKeyStore=../../var/lib/jenkins/jenkins_2.jks --httpsKeyStorePassword=wibilong"
+JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=-1 --httpsPort=$HTTP_PORT --httpsKeyStore=../../var/lib/jenkins/jenkins.jks --httpsKeyStorePassword={{ pillar.jenkins.master.ssl.javaKeystorePassword }}"

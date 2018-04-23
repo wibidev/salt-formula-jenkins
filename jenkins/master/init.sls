@@ -3,6 +3,8 @@
 include:
 - jenkins.master.service
 - jenkins.master.user
+{%- if master.ssl is defined %}
+- jenkins.master.ssl
 {%- if master.plugins is defined %}
 - jenkins.master.plugin
 {%- endif %}
