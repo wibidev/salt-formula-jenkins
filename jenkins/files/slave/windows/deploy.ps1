@@ -133,8 +133,8 @@ function _deployService {
 
 try {
     Info -Msg "Deploying Jenkins slave as a service..."
-    $service = {{ slave.service }}
-    $nssm = {{ slave.nssmpath }}
+    $service = "{{ slave.service }}"
+    $nssm = "{{ slave.nssmpath }}"
     switch ($action) {
         "start" { _deployService }
         "stop" { _removeService }
