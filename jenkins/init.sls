@@ -1,6 +1,8 @@
 
 include:
+{%- if grains.os_family != 'Windows' %}
 - jenkins.pre_install
+{%- endif %}
 {%- if pillar.jenkins.master is defined %}
 - jenkins.master
 {%- endif %}
