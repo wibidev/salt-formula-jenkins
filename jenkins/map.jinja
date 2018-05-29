@@ -52,6 +52,9 @@
         'service': 'jenkins-slave',
         'config': '/etc/sysconfig/jenkins-slave',
     },
+    'Windows': {
+        'service': 'jenkins-slave',
+    },
 }, merge=pillar.jenkins.get('slave', {})) %}
 
 {% set job_status = {

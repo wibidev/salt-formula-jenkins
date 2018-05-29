@@ -6,29 +6,100 @@
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#
+# /etc/init.d/jenkins-slave: start and stop Jenkins slave
+#
+
+### BEGIN INIT INFO
+# Provides:          jenkins-slave
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starts jenkins-slave
+# Description:       Starts jenkins-slave
+### END INIT INFO
+
+set -e
 NAME=jenkins-slave
 
-# Check config
-if test -f /etc/default/$NAME; then
+if test /etc/default/$NAME; then
   . /etc/default/$NAME
 else
-  echo "Configuration for $NAME does not exist" 1>&2
+  echo "Default configuration file for $NAME does not exist" 1>&2
   exit 1
 fi
 
-# Check Java
-if [ -x "${JAVA_HOME}/bin/java" ]; then
-  JAVA="${JAVA_HOME}/bin/java"
-else
-  JAVA=`which java`
-fi
-if [ ! -x "$JAVA" ]; then
-  echo "Could not find any executable java binary. Please install java in your PATH or set JAVA_HOME"
-  exit 1
-fi
+. /lib/lsb/init-functions
 
-# Get slave.jar from master
-[ -n "${JENKINS_LOGIN}" ] && WGET_ARGS="--user=$JENKINS_LOGIN --password=$JENKINS_PASSWORD"
-[ -f ${JENKINS_HOME}/agent.jar ] || wget $WGET_ARGS -O ${JENKINS_HOME}/agent.jar -q ${JENKINS_URL}/jnlpJars/agent.jar
+COMMAND=${JAVA_HOME}/bin/java
+COMMAND_ARGS="-jar agent.jar ${JENKINS_ARGS}"
 
-$JAVA -jar ${JENKINS_HOME}/agent.jar ${JENKINS_ARGS}
+function checkJava() {
+  if [ -x "${JAVA_HOME}/bin/java" ]; then
+    JAVA="${JAVA_HOME}/bin/java"
+  else
+    JAVA=`which java`
+  fi
+  if [ ! -x "$JAVA" ]; then
+    echo "Could not find any executable java binary. Please install java in your PATH or set JAVA_HOME"
+    exit 1
+  fi
+  COMMAND=$JAVA
+}
+
+function checkRunning() {
+  start-stop-daemon -T --pidfile ${PIDFILE}
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    log_end_msg 1 || true
+    exit $ret
+  fi
+}
+
+function start() {
+  # Get slave.jar from master
+  [ -n "${JENKINS_LOGIN}" ] && WGET_ARGS="--user=$JENKINS_LOGIN --password=$JENKINS_PASSWORD"
+  [ -f ${JENKINS_HOME}/agent.jar ] || wget $WGET_ARGS -O ${JENKINS_HOME}/agent.jar -q ${JENKINS_URL}/jnlpJars/agent.jar
+
+  if start-stop-daemon -c ${JENKINS_USER} -d ${JENKINS_HOME} --background --start --quiet --oknodo -m --pidfile ${PIDFILE} --exec ${COMMAND} -- ${COMMAND_ARGS} > ${JENKINS_SLAVE_LOG} 2>&1; then
+    log_end_msg 0 || true
+  else
+    log_end_msg 1 || true
+  fi
+}
+
+function stop() {
+  if start-stop-daemon --stop --quiet --oknodo --pidfile ${PIDFILE}; then
+    log_end_msg 0 || true
+  else
+    log_end_msg 1 || true
+  fi
+}
+
+case "$1" in
+  start)
+    checkJava
+    log_daemon_msg "Starting Jenkins slave" "$NAME" || true
+    start
+    checkRunning
+    ;;
+  stop)
+    log_daemon_msg "Stopping Jenkins slave" "$NAME" || true
+    stop
+    ;;
+  status)
+    status_of_proc -p ${PIDFILE} ${COMMAND} $NAME && exit 0 || exit $?
+    ;;
+  restart|reload|force-reload)
+    log_daemon_msg "Restarting Jenkins slave" "$NAME" || true
+    stop
+    start
+    ;;
+  *)
+    log_action_msg "Usage: /etc/init.d/$NAME {start|stop|status|restart|reload|force-reload}" || true
+    exit 1
+    ;;
+esac
+
+exit 0

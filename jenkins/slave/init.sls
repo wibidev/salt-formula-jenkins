@@ -4,7 +4,6 @@
 
 {%- if slave.pbuilder is defined or slave.gpg is defined or slave.keystone is defined %}
 include:
-{%- endif %}
 {%- if slave.pbuilder is defined %}
 - jenkins.slave.pbuilder
 {%- endif %}
@@ -14,6 +13,41 @@ include:
 {%- if slave.keystone is defined %}
 - jenkins.slave.keystone
 {%- endif %}
+{%- endif %}
+
+{% if grains.os_family %}
+
+jenkins_slave_home:
+  file.directory:
+    - name: {{ slave.jenkinshome }}
+
+jenkins_slave_init_script:
+  file.managed:
+    - name: {{ slave.jenkinshome }}/deploy.ps1
+    - source: salt://jenkins/files/slave/windows/deploy.ps1
+    - template: jinja
+    - require:
+      - file: jenkins_slave_home
+
+jenkins_slave_install:
+  cmd.run:
+    - name: '.\deploy.ps1 -a start'
+    - unless: powershell.exe -ExecutionPolicy Bypass -command "if ( Get-Service {{ slave.service }} -ErrorAction SilentlyContinue ) { exit 0 } else { exit 1 }"
+    - cwd: {{ slave.jenkinshome }}
+    - shell: powershell
+    - require:
+      - file: jenkins_slave_init_script
+
+jenkins_slave_service:
+  service.running:
+  - name: {{ slave.service }}
+  - enable: true
+  - require:
+    - cmd: jenkins_slave_install
+  - watch:
+    - file: jenkins_slave_init_script
+
+{% else %}
 
 jenkins_slave_user:
   user.present:
@@ -51,7 +85,7 @@ jenkins_slave_init_script:
 jenkins_slave_init_script:
   file.managed:
     - name: {{ slave.init_script }}
-    - source: salt://jenkins/files/slave/init.d/jenkins-slave
+    - source: salt://jenkins/files/slave/jenkins-slave
     - user: root
     - group: root
     - mode: 755
@@ -131,3 +165,5 @@ jenkins_slave_sudoer:
 {%- endif %}
 
 {%- endif %}
+
+{% endif %}
