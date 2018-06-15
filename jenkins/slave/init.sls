@@ -15,7 +15,7 @@ include:
 {%- endif %}
 {%- endif %}
 
-{% if grains.os_family %}
+{% if grains.os_family == 'Windows' %}
 
 jenkins_slave_home:
   file.directory:
