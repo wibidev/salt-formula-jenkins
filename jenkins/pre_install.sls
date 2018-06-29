@@ -7,7 +7,7 @@ jenkins.apt.key:
 # Source
 jenkins.apt.source:
   cmd.run:
-    - name: "sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'"
+    - name: "sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'"
     - user: root
     - require:
       - cmd: jenkins.apt.key
