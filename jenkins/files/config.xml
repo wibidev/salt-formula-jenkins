@@ -61,7 +61,9 @@
   </views>
   <primaryView>All</primaryView>
   <slaveAgentPort>54906</slaveAgentPort>
-  <disabledAgentProtocols>
+  <disabledAgentProtocols>.
+    <string>CLI-connect</string>
+    <string>CLI2-connect</string>
     <string>JNLP-connect</string>
     <string>JNLP2-connect</string>
   </disabledAgentProtocols>
