@@ -20,13 +20,13 @@ include:
 jenkins_user:
   user.present:
     - name: {{ slave.runner.name }}
+    - groups:
+      - Administrators
     - password: {{ slave.runner.password }}
 
 jenkins_slave_home:
   file.directory:
     - name: {{ slave.jenkinshome }}
-    - groups:
-      - Administrators
     - require:
       - user: jenkins_user
 
