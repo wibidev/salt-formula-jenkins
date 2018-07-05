@@ -25,6 +25,8 @@ jenkins_user:
 jenkins_slave_home:
   file.directory:
     - name: {{ slave.jenkinshome }}
+    - groups:
+      - Administrators
     - require:
       - user: jenkins_user
 
