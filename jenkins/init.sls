@@ -1,4 +1,3 @@
-
 include:
 {%- if grains.os_family != 'Windows' %}
 - jenkins.pre_install
