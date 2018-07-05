@@ -98,6 +98,9 @@ function _installService {
     $jenkinsCredentials = "{{ slave.user.name }}:{{ slave.user.password }}"
     $jenkinsCommand = "java -jar $jenkinsHome/agent.jar -jnlpUrl $jenkinsUrl/computer/{{ slave.hostname }}/slave-agent.jnlp -jnlpCredentials `"$jenkinsCredentials`""
     Invoke-RestMethod -Uri "$jenkinsUrl/jnlpJars/agent.jar" -Method "GET" -OutFile "$jenkinsHome/agent.jar"
+    $jenkinsUser = "$env:COMPUTERNAME\{{ slave.runner.name }}"
+    $jenkinsPwd = "{{ slave.runner.password }}"
+    Start-Process -FilePath $nssm -ArgumentList "set $service ObjectName $jenkinsUser $jenkinsPwd" -NoNewWindow -Wait
     Start-Process -FilePath $nssm -ArgumentList "install $service $jenkinsCommand" -NoNewWindow -Wait
     Start-Process -FilePath $nssm -ArgumentList "set $service DisplayName $service" -NoNewWindow -Wait
     Start-Process -FilePath $nssm -ArgumentList "set $service Description $service" -NoNewWindow -Wait
