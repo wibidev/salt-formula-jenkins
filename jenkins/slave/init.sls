@@ -17,18 +17,9 @@ include:
 
 {% if grains.os_family == 'Windows' %}
 
-jenkins_user:
-  user.present:
-    - name: {{ slave.runner.name }}
-    - password: {{ slave.runner.password }}
-    - groups:
-      - Administrators
-
 jenkins_slave_home:
   file.directory:
     - name: {{ slave.jenkinshome }}
-    - require:
-      - user: jenkins_user
 
 jenkins_slave_init_script:
   file.managed:
