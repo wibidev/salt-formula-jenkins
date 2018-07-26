@@ -80,9 +80,11 @@ Simple master with reverse proxy
         slaves:
           - name: slave01
             label: pbuilder
+            remoteFs: /var/lib/jenkins
             executors: 2
           - name: slave02
             label: image_builder
+            remoteFs: /var/lib/jenkins
             mode: EXCLUSIVE
             executors: 2
         views:
@@ -97,6 +99,19 @@ Simple master with reverse proxy
           - name: extended-choice-parameter
           - name: rebuild
           - name: test-stability
+
+Enable https
+
+.. code-block:: yaml
+    jenkins:
+    enabled: True
+    key: /path/to/my/key.pem
+    keyHash: /path/to/my/hash.pem.sha512
+    chainCert: /path/to/my/certificated.crt
+    chainCertHash: /path/to/my/certificate.crt.sha512
+    fileName: jenkins
+    javaKeystorePassword: dexiech6AepohthaiHook2iesh7ol5ook4Ov3leid3yek6daid2ooNg3Ee2oKeYo
+
 
 Jenkins master with experimental plugin source support
 
@@ -164,6 +179,7 @@ Agent (slave) role
     jenkins:
       slave:
         enabled: True
+        hostname: jenkins-slave
         master:
           host: jenkins.example.com
           port: 80
@@ -190,11 +206,7 @@ Simple client with workflow job definition
 
     jenkins:
       client:
-        master:
-          enabled: True
-          host: jenkins.example.com
-          port: 80
-          protocol: http
+        enabled: True
         job:
           jobname:
             type: workflow

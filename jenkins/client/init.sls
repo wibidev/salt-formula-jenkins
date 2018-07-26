@@ -53,7 +53,6 @@ include:
   - jenkins.client.job_template
 {%- endif %}
 
-
 jenkins_client_install:
   pkg.installed:
   - names: {{ client.pkgs }}
