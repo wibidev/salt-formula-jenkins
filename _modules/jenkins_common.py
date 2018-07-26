@@ -58,7 +58,6 @@ def call_groovy_script(script, props, username=None,
         jenkins_user = username
     if password:
         jenkins_password = password
-    raise SaltInvocationError(jenkins_user)
     if not jenkins_url:
         raise SaltInvocationError('No Jenkins URL found.')
 
