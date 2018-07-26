@@ -60,8 +60,8 @@ def call_groovy_script(script, props, username=None,
         jenkins_password = password
 
     if not jenkins_url:
-        jenkins_url = "http://localhost:8080/"
-        # raise SaltInvocationError('No Jenkins URL found.')
+        # jenkins_url = "http://localhost:8080/"
+        raise SaltInvocationError('No Jenkins URL found. User:' + jenkins_user + ', pwd: ' + jenkins_password)
 
     token_obj = get_api_crumb(jenkins_url, jenkins_user, jenkins_password)
     req_data = {"script": render_groovy_script(script, props)}
