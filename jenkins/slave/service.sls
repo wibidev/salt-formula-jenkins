@@ -1,3 +1,5 @@
+{%- from "jenkins/map.jinja" import slave with context %}
+
 {% if grains.os_family == 'Windows' %}
 jenkins_slave_home:
   file.directory:
