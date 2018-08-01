@@ -44,7 +44,6 @@ include:
 {%- if client.globalenvprop is defined %}
   - jenkins.client.globalenvprop
 {%- endif %}
-
 # execute job enforcements as last
 {%- if client.job is defined %}
   - jenkins.client.job
