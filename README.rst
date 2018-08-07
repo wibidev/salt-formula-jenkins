@@ -110,6 +110,7 @@ Enable https
       master:
         ssl:
           enabled: True
+          port: 443
           key: /path/to/my/key.pem
           keyHash: /path/to/my/hash.pem.sha512
           chainCert: /path/to/my/certificated.crt
