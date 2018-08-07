@@ -107,13 +107,15 @@ Enable https
 
 .. code-block:: yaml
     jenkins:
-    enabled: True
-    key: /path/to/my/key.pem
-    keyHash: /path/to/my/hash.pem.sha512
-    chainCert: /path/to/my/certificated.crt
-    chainCertHash: /path/to/my/certificate.crt.sha512
-    fileName: jenkins
-    javaKeystorePassword: dexiech6AepohthaiHook2iesh7ol5ook4Ov3leid3yek6daid2ooNg3Ee2oKeYo
+      master:
+        ssl:
+          enabled: True
+          key: /path/to/my/key.pem
+          keyHash: /path/to/my/hash.pem.sha512
+          chainCert: /path/to/my/certificated.crt
+          chainCertHash: /path/to/my/certificate.crt.sha512
+          fileName: jenkins
+          javaKeystorePassword: dexiech6AepohthaiHook2iesh7ol5ook4Ov3leid3yek6daid2ooNg3Ee2oKeYo
 
 
 Jenkins master with experimental plugin source support
