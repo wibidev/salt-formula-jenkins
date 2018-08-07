@@ -68,6 +68,9 @@ Simple master with reverse proxy
               name: jenkins.example.com
               port: 80
     jenkins:
+      url: http://localhost:8080
+      user: admin_user
+      password: admin_password
       master:
         enabled: True
         mode: EXCLUSIVE

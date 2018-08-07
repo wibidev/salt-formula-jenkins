@@ -1,3 +1,6 @@
+{% set admin_user = salt['pillar.get']('jenkins:user', '') %}
+{% set admin_pwd  = salt['pillar.get']('jenkins:password', '') %}
+
 {% from "jenkins/map.jinja" import master with context %}
 
 {{ master.home }}/updates:
@@ -20,7 +23,7 @@ install_jenkins_plugin_{{ plugin.name }}:
   cmd.run:
   - name: >
       java -jar jenkins-cli.jar -s http://localhost:{{ master.http.port }} install-plugin {{ plugin.name }} ||
-      java -jar jenkins-cli.jar -s http://localhost:{{ master.http.port }} install-plugin --username {{ master.admin.name }} --password '{{ master.admin.password }}' {{ plugin.name }}
+      java -jar jenkins-cli.jar -s http://localhost:{{ master.http.port }} install-plugin --username {{ admin_user }} --password '{{ admin_pwd }}' {{ plugin.name }}
   - unless: "[ -d {{ master.home }}/plugins/{{ plugin.name }} ]"
   - cwd: /root
   - require:
