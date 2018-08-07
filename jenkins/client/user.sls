@@ -1,6 +1,6 @@
 {% from "jenkins/map.jinja" import client with context %}
 
-{% for name, user in client.get('user',{}).iteritems() %}
+{% for name, user in client.get('users',{}).iteritems() %}
 user_{{ name }}:
   jenkins_user.present:
   - username: {{ name }}

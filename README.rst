@@ -160,7 +160,7 @@ User enforcement
 
     jenkins:
       master:
-        user:
+        users:
           admin:
             api_token: xxxxxxxxxx
             password: admin_password
@@ -614,7 +614,7 @@ Users enforcing from client
 
     jenkins:
       client:
-        user:
+        users:
           admin:
             password: admin_password
             admin: true
