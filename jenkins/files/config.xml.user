@@ -1,3 +1,4 @@
+{%- set user = pillar.jenkins.master.users.get(user_name) -%}
 <?xml version='1.0' encoding='UTF-8'?>
 <user>
   <fullName>{{ user_name }}</fullName>
