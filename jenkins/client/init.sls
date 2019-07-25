@@ -14,7 +14,7 @@ include:
 {%- if client.credential is defined %}
   - jenkins.client.credential
 {%- endif %}
-{%- if client.user is defined %}
+{%- if client.users is defined %}
   - jenkins.client.user
 {%- endif %}
 {%- if client.node is defined %}
